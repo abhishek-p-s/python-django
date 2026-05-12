@@ -1,8 +1,9 @@
 from watchlist_app.models import Review, WatchList, StreamPlatform
 from watchlist_app.api.serializers import ReviewSerializer, StreamPlatformSerializer, WatchListSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET','POST'])
 def watch_list(request):
@@ -76,20 +77,22 @@ def stream_platform_details(request, id):
         return Response(status=status.HTTP_204_NO_CONTENT)          
     
 @api_view(['GET', 'POST', ])
+@permission_classes([IsAuthenticated])
 def review_list(request):
     if request.method=='GET':
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
-    if request.method=='POST':
+    if request.method=='POST': 
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(review_user=request.user) 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def review_details(request, id):
     review = Review.objects.get(id=id)
     if request.method=='GET':

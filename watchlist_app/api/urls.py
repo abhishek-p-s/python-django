@@ -6,6 +6,8 @@ urlpatterns = [
     path('<int:id>/', watch_details, name='movie-details'),
     path('stream/', stream_platform, name='stream-platform'),
     path('stream/<int:id>/', stream_platform_details, name='stream-details'),
+    
+    path('stream/<int:id>/reviews/', stream_platform_details, name='stream-details'),
     path('reviews/', review_list, name='review-list'),
-    path('reviews/<int:id>/', review_details, name='review-details')
+    path('reviews/<int:id>/', review_details, name='review-details'),
 ]
